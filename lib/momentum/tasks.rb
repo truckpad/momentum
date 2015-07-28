@@ -6,19 +6,6 @@ def require_credentials!(args)
   raise "Must set aws_id and aws_secret!" unless args[:aws_id] && args[:aws_secret]
 end
 
-def cookbooks_s3_key(to)
-  "#{stack_name(to)}.zip"
-end
-
 def stack_name(to)
   Momentum.config[:stack_name]
-end
-
-def cookbooks_zip
-  "#{Momentum.config[:cookbooks_install_path]}.zip"
-end
-
-def system!(command)
-  success = system(command)
-  fail "Failed with status #{$?.exitstatus}" unless success
 end

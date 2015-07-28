@@ -64,14 +64,6 @@ For stacks with labels not matching the Rails environment (e.g., _reflection-joe
 
     bundle exec rake ow:console[joey,staging]
 
-### ow:cookbooks:update[to,aws_id,aws_secret]
-
-Zip, upload, and propagate custom cookbooks to the given stack. Or, more concisely:
-
-    bundle exec rake ow:cookbooks:update[staging]
-    # or just:
-    bundle exec rake ow:cookbooks:update:staging
-
 ### ow:deploy[to,migrate_db,aws_id,aws_secret]
 
 Trigger an OpsWorks deploy to the given stack. By default, deploys app to all running instances of the _rails-app_ layer, or the list configured in `app_layers`. E.g.:
@@ -82,27 +74,19 @@ Trigger an OpsWorks deploy to the given stack. By default, deploys app to all ru
     # if you want to trigger database migrations at the same time, add the additional flag
     bundle exec rake ow:deploy:migrations[staging]
 
-### ow:logs[to,instance,log_path,aws_id,aws_secret]
+### ow:logs[to,instance,log_path]
 
 Execute a tail -f (follow) command against a remote log path on the given remote OpsWorks instance and stack. The path may include wildcards. E.g.:
 
     bundle exec rake ow:logs[staging,rails-app1,/srv/www/myapp/shared/log/staging.log]
 
-### ow:ssh[to,layer_or_instance,aws_id,aws_secret]
+### ow:ssh[to,layer_or_instance]
 
 SSH to an OpsWorks instance. If the `layer_or_instance` argument is a layer, an online instance is chosen randomly from the layer. Otherwise, the name of an online instance is expected. E.g.:
 
     bundle exec rake ow:ssh[staging,memcached]
     # or...
     bundle exec rake ow:ssh[staging,rails-app1]
-
-### ow:execute_recipe[to,layer,recipe,aws_id,aws_secret]
-
-Execute a Chec recipe on the given layer in the given stack. By default, will execute recipes on all running instances of the _rails-app_ layer, or the list configured in `app_layers`. E.g.:
-
-    bundle exec rake ow:execute_recipe[staging,rails-app,restart_unicorns]
-    # Assuming 'restart_unicorns' is a valid Chef recipe.
-
 
 ## Configuration:
 
@@ -111,12 +95,12 @@ Execute a Chec recipe on the given layer in the given stack. By default, will ex
 * **cookbooks_install_path** - Local path where librarian-chef will install cookbooks. Default: _tmp/cookbooks_
 * **custom_cookbooks_bucket** - Bucket to which custom cookbooks are uploaded. Default: _artsy-cookbooks_
 * **rails_console_layer** - The OpsWorks layer used for SSH-ing and starting a rails console. Default: _rails-app_
+* **source_app_env** - The file where is the export envs of the app a file with "export "KEY" = "123" "
+
 
 
 ## To Do
-
-* git/branch helpers
-* Integrate librarian-chef as legit dependency once rails/chef conflicts resolved
+* Update Envs
 * Tests
 
 
