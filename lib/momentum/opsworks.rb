@@ -13,7 +13,7 @@ module Momentum::OpsWorks
   end
 
   def self.get_app(client, stack, app_name)
-    client.describe_apps(stack_id: stack[:stack_id])[:apps].detect { |a| a[:name] == app_name }
+    client.describe_apps(stack_id: stack[:stack_id])[:apps].detect { |a| a[:app_short_name] == app_name }
   end
 
   # apparently, public_dns is not always set, fallback to elastic_ip (if available!)
@@ -43,7 +43,7 @@ module Momentum::OpsWorks
 
   class Config
 
-    def self.from_stack(client, stack_name, app_name = Momentum.config[:app_base_name])
+    def self.from_stack(client, stack_name, app_name = Momentum.config[:app_short_name])
       @@configs ||= {}
       @@configs[[stack_name, app_name]] ||= load_from_stack(client, stack_name, app_name)
     end
@@ -77,7 +77,7 @@ module Momentum::OpsWorks
       @ow = Momentum::OpsWorks.client(aws_id, aws_secret)
     end
 
-    def execute_recipe!(stack_name, layer, recipe, app_name = Momentum.config[:app_base_name])
+    def execute_recipe!(stack_name, layer, recipe, app_name = Momentum.config[:app_short_name])
       raise "No recipe provided" unless recipe
       stack = Momentum::OpsWorks.get_stack(@ow, stack_name)
       app = Momentum::OpsWorks.get_app(@ow, stack, app_name)
@@ -98,12 +98,9 @@ module Momentum::OpsWorks
       )
     end
 
-    def deploy!(stack_name, migrate_db = false, app_name = Momentum.config[:app_base_name])
+    def deploy!(stack_name, migrate_db = false, app_name = Momentum.config[:app_short_name])
       stack = Momentum::OpsWorks.get_stack(@ow, stack_name)
       app = Momentum::OpsWorks.get_app(@ow, stack, app_name)
-      layers = Momentum::OpsWorks.get_layers(@ow, stack, Momentum.config[:app_layers])
-      instance_ids = layers.inject([]) { |ids, l| ids + Momentum::OpsWorks.get_online_instance_ids(@ow, layer_id: l[:layer_id]) }
-      raise 'No online instances found!' if instance_ids.empty?
       @ow.create_deployment(
         stack_id: stack[:stack_id],
         app_id: app[:app_id],
@@ -112,8 +109,7 @@ module Momentum::OpsWorks
           args: {
             'migrate' => [migrate_db.to_s]
           }
-        },
-        instance_ids: instance_ids
+        }
       )
     end
 

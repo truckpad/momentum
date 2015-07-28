@@ -35,6 +35,9 @@ It's assumed that stacks are named with an app name and modifier, such as _todo-
 
 This gem adds a few useful rake tasks to your project. By default, the `aws_id` and `aws_secret` arguments are taken from `AWS_ID` and `AWS_SECRET` ENV variables. The `to` argument refers to the modifier mentioned above (e.g., _production_). It's appended to the configured `app_base_name` to form the stack name.
 
+AWS_PUBLICKEY is the path to the instaces keys
+AWS_USER is the user name to the instances ssh access
+
 ### momentum:init
 
 Initialize a default librarian-chef config.
@@ -118,4 +121,3 @@ Execute a Chec recipe on the given layer in the given stack. By default, will ex
 
 
 &copy; 2014 [Artsy](http://artsy.net). See [LICENSE](LICENSE.txt) for details.
-

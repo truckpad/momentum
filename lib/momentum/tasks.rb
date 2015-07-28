@@ -11,7 +11,7 @@ def cookbooks_s3_key(to)
 end
 
 def stack_name(to)
-  "#{Momentum.config[:app_base_name]}-#{to}"
+  Momentum.config[:stack_name]
 end
 
 def cookbooks_zip
